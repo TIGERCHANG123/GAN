@@ -6,26 +6,28 @@ class generator_block_Conv2DTranspose(tf.keras.Model):
     super(generator_block_Conv2DTranspose, self).__init__()
     self.Conv2DTranspose = tf.keras.layers.Conv2DTranspose(channels, (5, 5), strides=strides, padding='same', use_bias=False)
     self.bn = tf.keras.layers.BatchNormalization()
-    self.leakyRelu = tf.keras.layers.LeakyReLU()
+    self.Relu = tf.keras.layers.ReLU()
+    self.tanh = tf.keras.layers.Activation('tanh')
   def call(self, x, output):
     if not output:
       x = self.Conv2DTranspose(x)
       x = self.bn(x)
-      x = self.leakyRelu(x)
+      x = self.Relu(x)
       return x
     else:
       x = self.Conv2DTranspose(x)
+      x = self.tanh(x)
       return x
 class generator_block_Dense(tf.keras.Model):
   def __init__(self, channels, input_shape):
     super(generator_block_Dense, self).__init__()
     self.dense=tf.keras.layers.Dense(channels, use_bias=False, input_shape=input_shape)
     self.bn = tf.keras.layers.BatchNormalization()
-    self.leakyRelu = tf.keras.layers.LeakyReLU()
+    self.Relu = tf.keras.layers.ReLU()
   def call(self, x):
     x = self.dense(x)
     x = self.bn(x)
-    x = self.leakyRelu(x)
+    x = self.Relu(x)
     return x
 
 class generator(tf.keras.Model):
@@ -55,12 +57,14 @@ class discriminator(tf.keras.Model):
     super(discriminator, self).__init__()
     model = tf.keras.Sequential()
     model.add(layers.Conv2D(64, (5, 5), strides=(2, 2), padding='same',input_shape=input_shape))
+    model.add(tf.keras.layers.BatchNormalization())
     model.add(layers.LeakyReLU())
-    model.add(layers.Dropout(0.3))
+    # model.add(layers.Dropout(0.2))
 
     model.add(layers.Conv2D(128, (5, 5), strides=(2, 2), padding='same'))
+    model.add(tf.keras.layers.BatchNormalization())
     model.add(layers.LeakyReLU())
-    model.add(layers.Dropout(0.3))
+    # model.add(layers.Dropout(0.2))
 
     model.add(layers.Flatten())
     model.add(layers.Dense(1))

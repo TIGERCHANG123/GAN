@@ -14,12 +14,12 @@ root = windows_root
 def main():
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
     pic = draw(10, root, model_dataset)
-    noise_dim = 128
+    noise_dim = 100
     dataset = mnist_dataset()
     train_dataset = dataset.get_train_dataset()
 
-    generator_optimizer = tf.keras.optimizers.Adam(1e-4)
-    discriminator_optimizer = tf.keras.optimizers.Adam(1e-4)
+    generator_optimizer = tf.keras.optimizers.Adam(2e-4)
+    discriminator_optimizer = tf.keras.optimizers.Adam(2e-4)
 
     generator_model = generator(input_shape=[noise_dim, ])
     discriminator_model = discriminator()
