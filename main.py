@@ -5,6 +5,8 @@ from GAN import generator, discriminator
 from show_pic import draw
 from Train import train_one_epoch
 from mnist import mnist_dataset
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
 
 ubuntu_root='/home/tigerc/temp'
 windows_root='D:/Automatic/SRTP/GAN/temp'
@@ -48,4 +50,8 @@ def main():
     return
 
 if __name__ == '__main__':
+    config = ConfigProto()
+    config.gpu_options.allow_growth = True
+    session = InteractiveSession(config=config)
+
     main()
