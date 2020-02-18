@@ -77,25 +77,25 @@ class draw:
     plt.imshow(image)
     plt.show()
 
-  def show_created_pic(self, generator, pic_num, noise_dim):
-    x = tf.convert_to_tensor(np.random.rand(pic_num, noise_dim))
-    y = generator(x)
-    for i in range(pic_num):
-      plt.subplot(1, pic_num, i + 1)
-      plt.imshow(y[i].numpy().reshape(28, 28) / 255 - 0.5, 'gray')
+  def show_created_pic(self, generator, num_list, auxi_list, noise_generator):
+    auxi_con_1, auxi_con_2 = auxi_list
+    for i, num in enumerate(num_list):
+      _, _, x = noise_generator.get_fixed_noise(num, auxi_con_1, auxi_con_2)
+      y = generator(x)
+      y=tf.squeeze(y, axis=-1)
+      plt.subplot(1, len(num_list), i + 1)
+      plt.imshow(y[i].numpy(), 'gray')
       plt.axis('off')
       plt.tight_layout()
     plt.show()
     return
 
-  def save_created_pic(self, generator, pic_num, noise_dim, epoch):
-    x = tf.convert_to_tensor(np.random.rand(pic_num, noise_dim))
-    y = generator(x)
-    y=tf.squeeze(y)
-    for i in range(pic_num):
-      # plt.subplot(1, pic_num, i + 1)
-      # plt.imshow(y[i].numpy().reshape(28, 28) / 255 - 0.5, 'gray')
-      # plt.axis('off')
-      # plt.tight_layout()
-      plt.imsave(self.generated_pic_path+'/{}_{}.png'.format(epoch, i), y[i].numpy())
+  def save_created_pic(self, generator, num_list, auxi_list, noise_generator, epoch):
+    auxi_con_1, auxi_con_2 = auxi_list
+    for i in num_list:
+      _, _, x = noise_generator.get_fixed_noise(i, auxi_con_1, auxi_con_2)
+      y = generator(x)
+      y = tf.squeeze(y)
+      plt.imsave(self.generated_pic_path + '/{}_{}.png'.format(epoch, i), y.numpy())
+
     return
