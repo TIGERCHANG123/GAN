@@ -9,14 +9,14 @@ class mnist_dataset():
         print(meta)
         self.train_dataset=mnist['train']
         self.noise_dim = noise_dim
+        self.name = 'mnist'
         return
     def parse(self, x, y):
-        x=tf.cast(x, tf.float64)
+        x=tf.cast(x, tf.float32)
         # x = tf.expand_dims(x, -1)
-        x=x/255-0.5
-        noise = tf.random.normal([self.noise_dim])
-        noise = tf.cast(noise, tf.float64)
-        return noise, x
+        x=x/255*2 - 1
+        y = tf.cast(y, tf.int64)
+        return x, y
     def get_train_dataset(self):
         train_dataset = self.train_dataset.map(self.parse).shuffle(60000).batch(128)
         return train_dataset
